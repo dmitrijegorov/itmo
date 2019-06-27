@@ -1,47 +1,65 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
+#include <iostream>
+#include <vector>
 
-
-class character {
-public: //protected or private
-    int health, level, x;
+class Character {                       //общее описание класса
+protected:
+    int health=100, level, x;
+    virtual Character* chooseCharToAct(std::vector<Character *> characters)=0;         //виртуальная функция выбора
+    virtual void whereToGo(std::vector<Character *> characters)=0;             //виртуальная функция передвижения
+    virtual void attack(Character* tar)=0;             //виртуальная функция атаки
 public:
-    character();
-    virtual void action(character*);
-    virtual void reflect();
+    void changeHealth(int x){health=x;}
+    int getX(){return x;}
+    int getHealth(){return health;}
+    int getLevel(){return  level;}
+    virtual void reflect(Character* c, int damage)=0;           //виртуальная функция защиты
+    void action(std::vector<Character*> characters);       //виртуальная функция действия
 
+    Character(int start_health, int start_level, int start_x): health(start_health), level(start_level), x(start_x){}     //черты героя
 };
 
-class bogenschutze;
-class schwertkampfer;
-class magier;
 
-class schwertkampfer : public character{
+class Schwertkampfer: public Character{
+protected:
+    static float coeff;
+    static const float reflection_coeff;
+    Character* chooseCharToAct(std::vector<Character *> characters) override;            //виртуальная функция выбора
+    void whereToGo(std::vector<Character *> characters) override;                //виртуальная функция передвижения
+    void attack(Character* tar) override;                                //виртуальная функция атаки
 public:
-   schwertkampfer(int, int, int);
-   void action(schwertkampfer*, bogenschutze*, magier*, int, int, int);
-   /* arrays of objects and their appropriate sizes */
-   /* array of objects that are available for interconnection (NOT include self.this) */
-   void reflect(int, int);
-   /*
-    * call this method regarding to the player you are attempting to attack
-    * int type = {1, 2, 3}, int value of health harm without coeff
-   */
+    void reflect(Character* c, int damage) override;        //виртуальная функция защиты
 
-};
-class bogenschutze : public character{
-public:
-    bogenschutze(int, int, int);
-    void action(schwertkampfer*, bogenschutze*, magier*, int, int, int);
-    void reflect(int, int);
+    Schwertkampfer(int start_health, int start_level, int start_x):  Character(start_health, start_level, start_x) {}
 };
 
-class magier : public character{
+
+class bogenschutze : public Character{
+protected:
+    float coeff;
+    static const float reflection_coeff;
+    Character* chooseCharToAct(std::vector<Character *> characters) override;            //виртуальная функция выбора
+    void whereToGo(std::vector<Character *> characters) override;                //виртуальная функция передвижения
+    void attack(Character* tar) override;                                //виртуальная функция атаки
 public:
-    magier(int, int, int);
-    void action(schwertkampfer*, bogenschutze*, magier*, int, int, int);
-    void reflect(int, int);
+    bogenschutze(int start_health, int start_level, int start_x):  Character(start_health, start_level, start_x) {}
+    void reflect(Character* c, int damage) override;                //виртуальная функция защиты
+//    void action(std::vector<character*> characters) override;           //виртуальная функция действия
+};
+
+
+class magier : public Character{
+protected:
+    float coeff;
+    static const float reflection_coeff;
+    Character* chooseCharToAct(std::vector<Character *> characters) override;            //виртуальная функция выбора
+    void whereToGo(std::vector<Character *> characters) override;                //виртуальная функция передвижения
+    void attack(Character* tar) override;                                //виртуальная функция атаки
+public:
+    magier(int start_health, int start_level, int start_x):  Character(start_health, start_level, start_x) {}
+    void reflect(Character* c, int damage) override;            //виртуальная функция защиты
+
 };
 
 #endif //CHARACTER_H
-
